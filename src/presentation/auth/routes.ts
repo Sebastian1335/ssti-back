@@ -21,6 +21,7 @@ export class AuthRoutes {
             AuthMiddleware.validarToken,
             authController.getAllUsers
         );
+        router.get("/check", AuthMiddleware.validarToken, authController.getPerfil)
         return router;
     }
 }

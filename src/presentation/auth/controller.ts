@@ -39,5 +39,14 @@ export class AuthController {
             .then((users) => res.json(users))
             .catch(error => this.handleError(error, res))
     }
+
+    getPerfil = (req: Request, res: Response) => {
+        console.log(req.body);
+        const id = +req.body.user.id;
+        const rol = req.body.rol
+        this.authService.getPeril(id, rol!)
+            .then(user => res.json(user))
+            .catch(error => this.handleError(error, res))
+    }
     
 }

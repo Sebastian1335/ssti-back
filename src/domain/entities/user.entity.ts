@@ -1,3 +1,4 @@
+import { rol } from "@prisma/client";
 import { CustomError } from "../errors/custom.error"
 
 export class UserEntity {
@@ -11,10 +12,11 @@ export class UserEntity {
       public exp: number,
       public racha: number,
       public monedas: number,
+      public rol: string
     ) { }
   
     static fromObject( object: { [ key: string ]: any; } ) {
-      const { id, nombre, email, password, nivel, exp, racha, monedas } = object;
+      const { id, nombre, email, password, nivel, exp, racha, monedas, rol } = object;
   
       if ( !id ) {
         throw CustomError.badRequest( 'Missing id' );
@@ -25,7 +27,7 @@ export class UserEntity {
       if ( !password ) throw CustomError.badRequest( 'Missing password' );
       
   
-      return new UserEntity( id, nombre, email, password, nivel, exp, racha, monedas);
+      return new UserEntity( id, nombre, email, password, nivel, exp, racha, monedas, rol);
   
     }
   

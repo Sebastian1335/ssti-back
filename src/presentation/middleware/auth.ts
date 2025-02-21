@@ -26,8 +26,12 @@ export class AuthMiddleware {
             if (req.body.requiresAdmin && payload.rol !== 'ADMIN') {
                 return res.status(403).json({ error: "Forbidden: Admin role required" });
             }
-
-            req.body.user = usuario;
+            if (payload.rol === 'ADMIN') {
+                req.body.user = usuario
+                req.body.rol = "ADMIN"
+            }else{
+                req.body.user = usuario
+            }
             next();
     
         } catch (error) {

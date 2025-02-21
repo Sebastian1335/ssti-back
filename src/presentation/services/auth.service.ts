@@ -1,5 +1,5 @@
 
-import { rol } from '@prisma/client';
+import { $Enums, rol } from '@prisma/client';
 import { JwtAdapter } from '../../config/jwt.adapter';
 import { prisma } from '../../data/postgres';
 import { CustomError, UserEntity } from '../../domain';
@@ -22,7 +22,7 @@ export class AuthService {
         if (!usuario) throw CustomError.badRequest(`Error al registar el usuario`)
         const token = await JwtAdapter.generateToken({ usuario});
         if (!token) throw CustomError.internalServer("Error al crear JWT");
-        return { user: {id: usuario.id, email: usuario.email}, token: token + ''};
+        return { user: {id: usuario.id, nombre: usuario.nombre, rol: usuario.rol}, token: token + ''};
 
     }
 
@@ -40,16 +40,27 @@ export class AuthService {
         return {
             user: {
             id: user.id,
-            email: loginUser.email,
+            nombre: user.nombre,
             rol: user.rol
             }, token: token + ''
         }
     }
 
-    public async getUsers(): Promise<UserEntity[]>{
+    public async getUsers(){
         const users = await prisma.user.findMany()
-        const respUsers = users.map(u => UserEntity.fromObject(u))
 
-        return respUsers
+        return users
+    }
+
+    public async getPeril(id: number, rol: $Enums.rol){
+        const user = await prisma.user.findUnique({
+            where: {
+                id: id
+            }
+        })
+        if (!user) throw CustomError.notFound("Usuario no encontrado")
+        const {password,...resp} = user
+        resp.rol = rol
+        return resp
     }
 }
