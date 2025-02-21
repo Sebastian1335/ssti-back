@@ -1,4 +1,5 @@
 
+import { rol } from '@prisma/client';
 import { JwtAdapter } from '../../config/jwt.adapter';
 import { prisma } from '../../data/postgres';
 import { CustomError, UserEntity } from '../../domain';
@@ -35,11 +36,20 @@ export class AuthService {
         if (!user) throw CustomError.badRequest("Usuario no registrado");
         const isMatch = loginUser.password === user.password ;
         if (!isMatch) throw CustomError.badRequest("Contraseña incorrecta");
-        const token = await JwtAdapter.generateToken({ user });
-        return {user: {
+        const token = await JwtAdapter.generateToken({ id: user.id, rol: user.rol });
+        return {
+            user: {
             id: user.id,
-            email: loginUser.email
+            email: loginUser.email,
+            rol: user.rol
             }, token: token + ''
         }
+    }
+
+    public async getUsers(): Promise<UserEntity[]>{
+        const users = await prisma.user.findMany()
+        const respUsers = users.map(u => UserEntity.fromObject(u))
+
+        return respUsers
     }
 }

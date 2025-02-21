@@ -15,13 +15,17 @@ export class AuthMiddleware {
         
         try {
             
-            const payload = await JwtAdapter.validateToken<{ id: string }>(jwtToken);
+            const payload = await JwtAdapter.validateToken<{ id: string, rol: string }>(jwtToken);
             if (!payload) return res.status(401).json({ error: 'Token invalido' });
             
             const user = await prisma.user.findUnique({ where: { id: +payload.id } });
             if (!user) return res.status(401).json({ error: 'Invalid token - user' });
             
             const {password, ...usuario} = user
+
+            if (req.body.requiresAdmin && payload.rol !== 'ADMIN') {
+                return res.status(403).json({ error: "Forbidden: Admin role required" });
+            }
 
             req.body.user = usuario;
             next();

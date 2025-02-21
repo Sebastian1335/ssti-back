@@ -33,5 +33,11 @@ export class AuthController {
             .then((user) => res.json(user))
             .catch(error => this.handleError(error, res))
     }
+
+    getAllUsers = (req: Request, res: Response) => {
+        this.authService.getUsers()
+            .then((users) => res.json(users))
+            .catch(error => this.handleError(error, res))
+    }
     
 }

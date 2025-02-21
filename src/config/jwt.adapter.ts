@@ -8,7 +8,7 @@ const JWT_SEED = envs.JWT_SECRET
 export class JwtAdapter {
     static async generateToken(payload: any, duration: number = 60*60*24){
         return new Promise((resolve) => {
-            jwt.sign(payload, JWT_SEED, {algorithm: 'none' , expiresIn: duration}, (err, token) => {
+            jwt.sign(payload, JWT_SEED, {algorithm: 'HS256', expiresIn: duration}, (err, token) => {
                 if (err) return resolve(null)
                 resolve(token)
             })
